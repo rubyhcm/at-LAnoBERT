@@ -9,7 +9,7 @@ import json, textwrap
 
 GITHUB_REPO  = "https://github.com/rubyhcm/at-LAnoBERT"
 REPO_SUBDIR  = "LAnoBERT"
-KAGGLE_INPUT = "/kaggle/input/bgl-preprocessed"   # tên dataset trên Kaggle
+KAGGLE_INPUT = "/kaggle/input/bgl-preprocessed/bgl-preprocessed"   # tên dataset trên Kaggle
 
 def md(src):
     return {"cell_type": "markdown", "id": None, "metadata": {},
@@ -39,7 +39,7 @@ cells.append(md(
     "- `data/BGL/BGL_train_normal_parsed.log`  — train corpus (đã normalize)\n"
     "- `data/BGL/BGL_test_parsed.log`           — test corpus  (đã normalize)\n"
     "- `data/BGL/BGL_test_label.log`            — 0/1 labels\n"
-    "- `tokenizer/vocab.txt`                    — WordPiece vocab (1000 tokens)\n"
+    "- `tokenizer/BGL_LogBERT-vocab.txt`        — WordPiece vocab (1000 tokens)\n"
     "- `bgl.yaml`                               — config file\n\n"
     "Expected results: **AUROC 1.000 / Best-F1 1.000**"
 ))
@@ -111,7 +111,7 @@ cells.append(code(f"""
     TRAIN_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_train_normal_parsed.log'
     TEST_FILE  = f'{{INPUT_DIR}}/data/BGL/BGL_test_parsed.log'
     LABEL_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_test_label.log'
-    VOCAB_FILE = f'{{INPUT_DIR}}/tokenizer/vocab.txt'
+    VOCAB_FILE = f'{{INPUT_DIR}}/tokenizer/BGL_LogBERT-vocab.txt'
     SRC_CONFIG = f'{{INPUT_DIR}}/bgl.yaml'
 
     files = {{
