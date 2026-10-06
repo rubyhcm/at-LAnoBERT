@@ -102,39 +102,50 @@ cells.append(code(f"""
 # ── 3. Verify input data ─────────────────────────────────────────────────────
 cells.append(md(
     "## 3. Verify Input Dataset\n\n"
-    f"Kiểm tra dữ liệu được upload từ local (`{KAGGLE_INPUT}/`)."
+    "Tự động tìm thư mục chứa dữ liệu Kaggle đã upload."
 ))
 cells.append(code(f"""
     import os
 
-    INPUT_DIR  = '{KAGGLE_INPUT}'
-    TRAIN_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_train_normal_parsed.log'
-    TEST_FILE  = f'{{INPUT_DIR}}/data/BGL/BGL_test_parsed.log'
-    LABEL_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_test_label.log'
-    VOCAB_FILE = f'{{INPUT_DIR}}/tokenizer/BGL_LogBERT-vocab.txt'
-    SRC_CONFIG = f'{{INPUT_DIR}}/bgl.yaml'
+    # Tự động tìm thư mục chứa bgl.yaml trong /kaggle/input
+    INPUT_DIR = None
+    for root, dirs, files in os.walk('/kaggle/input'):
+        if 'bgl.yaml' in files:
+            INPUT_DIR = root
+            break
 
-    files = {{
-        'Train corpus' : TRAIN_FILE,
-        'Test corpus'  : TEST_FILE,
-        'Test labels'  : LABEL_FILE,
-        'Vocab'        : VOCAB_FILE,
-        'Config'       : SRC_CONFIG,
-    }}
-
-    all_ok = True
-    for name, path in files.items():
-        if os.path.exists(path):
-            sz = os.path.getsize(path)
-            print(f'  ✅ {{name:15s}} {{sz/1e6:8.2f}} MB  {{path}}')
-        else:
-            print(f'  ❌ {{name:15s}} NOT FOUND: {{path}}')
-            all_ok = False
-
-    if all_ok:
-        print('\\n✅ All input files present.')
+    if not INPUT_DIR:
+        print("❌ Không tìm thấy bgl.yaml trong /kaggle/input/! Vui lòng Add Input dataset.")
     else:
-        print('\\n❌ Missing files! Hãy chạy run_local_prep.py và upload kaggle_input/')
+        print(f"✅ Found dataset at: {{INPUT_DIR}}")
+        TRAIN_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_train_normal_parsed.log'
+        TEST_FILE  = f'{{INPUT_DIR}}/data/BGL/BGL_test_parsed.log'
+        LABEL_FILE = f'{{INPUT_DIR}}/data/BGL/BGL_test_label.log'
+        VOCAB_FILE = f'{{INPUT_DIR}}/tokenizer/BGL_LogBERT-vocab.txt'
+        SRC_CONFIG = f'{{INPUT_DIR}}/bgl.yaml'
+
+        files = {{
+            'Train corpus' : TRAIN_FILE,
+            'Test corpus'  : TEST_FILE,
+            'Test labels'  : LABEL_FILE,
+            'Vocab'        : VOCAB_FILE,
+            'Config'       : SRC_CONFIG,
+        }}
+
+        all_ok = True
+        for name, path in files.items():
+            if os.path.exists(path):
+                sz = os.path.getsize(path)
+                print(f'  ✅ {{name:15s}} {{sz/1e6:8.2f}} MB  {{path}}')
+            else:
+                print(f'  ❌ {{name:15s}} NOT FOUND: {{path}}')
+                all_ok = False
+
+        if all_ok:
+            print('\\n✅ All input files present.')
+        else:
+            print('\\n❌ Missing files!')
+
 """))
 cells.append(code(f"""
     # Sanity-check: in thử vài dòng train và test
@@ -153,7 +164,7 @@ cells.append(code(f"""
 # ── 4. Write Kaggle config ───────────────────────────────────────────────────
 cells.append(md(
     "## 4. Write BGL Config\n\n"
-    "Config giữ **nguyên** hyperparameters của tác giả, chỉ trỏ paths đến Kaggle working dirs."
+    "Config giữ **nguyên** hyperparameters của tác giả, chỉ trỏ paths đến thư mục được auto-detect."
 ))
 cells.append(code(f"""
     import os
@@ -168,13 +179,13 @@ dataset: BGL
 run_name: bgl
 
 paths:
-  raw_log:      {KAGGLE_INPUT}/data/BGL/BGL.log        # không dùng (đã preprocess)
-  train_raw:    {KAGGLE_INPUT}/data/BGL/BGL_train_normal.raw
-  test_raw:     {KAGGLE_INPUT}/data/BGL/BGL_test.raw
-  test_label:   {KAGGLE_INPUT}/data/BGL/BGL_test_label.log
-  train_normal: {KAGGLE_INPUT}/data/BGL/BGL_train_normal_parsed.log
-  test_log:     {KAGGLE_INPUT}/data/BGL/BGL_test_parsed.log
-  tokenizer_dir: {KAGGLE_INPUT}/tokenizer
+  raw_log:      {{INPUT_DIR}}/data/BGL/BGL.log        # không dùng (đã preprocess)
+  train_raw:    {{INPUT_DIR}}/data/BGL/BGL_train_normal.raw
+  test_raw:     {{INPUT_DIR}}/data/BGL/BGL_test.raw
+  test_label:   {{INPUT_DIR}}/data/BGL/BGL_test_label.log
+  train_normal: {{INPUT_DIR}}/data/BGL/BGL_train_normal_parsed.log
+  test_log:     {{INPUT_DIR}}/data/BGL/BGL_test_parsed.log
+  tokenizer_dir: {{INPUT_DIR}}/tokenizer
   model_dir:    /kaggle/working/outputs/BGL/model
   result_dir:   /kaggle/working/outputs/BGL/results
 
