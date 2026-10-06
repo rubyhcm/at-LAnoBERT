@@ -317,13 +317,6 @@ nb = {
         "language_info": {"name": "python", "version": "3.10.0"},
         "kaggle": {
             "accelerator": "gpu",
-            "dataSources": [
-                {
-                    "sourceType": "datasetVersion",
-                    "datasetId": "bgl-preprocessed",
-                    "mountPath": "/kaggle/input/bgl-preprocessed"
-                }
-            ],
             "dockerImageVersionId": 30918,
             "isInternetConnected": True,
             "language": "python",
