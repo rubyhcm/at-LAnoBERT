@@ -55,7 +55,7 @@ def load_tokenizer(vocab_file: str, max_len: int = 512):
     from transformers import BertTokenizerFast
 
     return BertTokenizerFast(
-        vocab_file=vocab_file,
+        vocab=vocab_file,
         max_len=max_len,
         do_lower_case=False,
     )

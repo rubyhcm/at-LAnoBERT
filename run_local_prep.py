@@ -175,7 +175,15 @@ def step3_tokenizer(cfg) -> str:
     if os.path.exists(vocab_file):
         print(f"[tokenizer] SKIP — already exists: {vocab_file}")
     else:
-        vocab_file = train_tokenizer(cfg)
+        tok_cfg = cfg.get("tokenizer", {})
+        vocab_file = train_tokenizer(
+            train_files=cfg.get_path("paths.train_normal"),
+            out_dir=cfg.get_path("paths.tokenizer_dir"),
+            vocab_size=int(tok_cfg.get("vocab_size", 1000)),
+            min_frequency=int(tok_cfg.get("min_frequency", 2)),
+            lowercase=bool(tok_cfg.get("lowercase", False)),
+            name=f"{cfg.get('dataset')}_LogBERT",
+        )
 
     tok = load_tokenizer(vocab_file, max_len=512)
     print(f"[tokenizer] vocab_size = {tok.vocab_size}")
