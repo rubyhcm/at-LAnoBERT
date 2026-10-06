@@ -93,13 +93,10 @@ cells.append(code(f"""
         subprocess.run(['git','clone','--depth','1',
                         '{GITHUB_REPO}', CLONE_DIR], check=True)
 
-    r = subprocess.run(['pip','install','-q','-e','.'], cwd=WORK_DIR,
-                       capture_output=True, text=True)
-    if r.returncode: print('ERR:', r.stderr[-1000:])
-    else: print('lanobert installed OK')
-
     if WORK_DIR not in sys.path:
         sys.path.insert(0, WORK_DIR)
+        print(f'Đã thêm {{WORK_DIR}} vào sys.path')
+
 """))
 
 # ── 3. Verify input data ─────────────────────────────────────────────────────
